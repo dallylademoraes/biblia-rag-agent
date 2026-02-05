@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rag na Bíblia</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Barra lateral">
+        <div class="side-top">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">R</div>
+            <div>
+              <div class="brand-title">Rag na Bíblia</div>
+              <div class="brand-sub" id="statusLine">Conectando…</div>
+            </div>
+          </div>
+
+          <button id="newChatBtn" class="btn btn-primary" type="button">Nova conversa</button>
+        </div>
+
+        <div class="side-section">
+          <div class="side-title">Status</div>
+          <div class="status">
+            <span id="statusDot" class="dot dot-warn" aria-hidden="true"></span>
+            <span id="statusText">Verificando…</span>
+          </div>
+          <div class="side-help" id="statusHelp"></div>
+        </div>
+
+        <div class="side-section">
+          <div class="side-title">Dicas</div>
+          <div class="chips">
+            <button class="chip" type="button" data-prompt="Quem foi Rute?">Quem foi Rute?</button>
+            <button class="chip" type="button" data-prompt="O que é fé?">O que é fé?</button>
+            <button class="chip" type="button" data-prompt="Juízes 16 fala sobre o quê?">Juízes 16…</button>
+          </div>
+        </div>
+
+        <div class="side-bottom">
+          <button id="clearBtn" class="btn btn-ghost" type="button">Limpar</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="top-left">
+            <button id="menuBtn" class="iconbtn" type="button" aria-label="Abrir menu">☰</button>
+            <div class="top-title">Rag na Bíblia</div>
+          </div>
+          <div class="top-right">
+            <div class="pill" id="pillReady">—</div>
+          </div>
+        </header>
+
+        <section class="thread" id="thread" aria-label="Conversa"></section>
+
+        <div class="scrollfab" id="scrollFab" hidden>
+          <button class="iconbtn" type="button" id="scrollBtn" aria-label="Ir para o fim">↓</button>
+        </div>
+
+        <footer class="composer">
+          <form id="form" class="composer-inner" autocomplete="off">
+            <textarea
+              id="input"
+              class="input"
+              rows="1"
+              placeholder="Pergunte algo…"
+              aria-label="Mensagem"
+            ></textarea>
+            <button id="sendBtn" class="btn btn-primary" type="submit">Enviar</button>
+          </form>
+          <div class="composer-hint">
+            Enter para enviar • Shift+Enter para nova linha
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
