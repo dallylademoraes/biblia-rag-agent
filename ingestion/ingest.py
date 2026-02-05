@@ -1,26 +1,32 @@
 """
-Ingestion RAG: TXT -> Chroma DB
+Ingestion RAG: TXT -> Chroma DB 
 """
+import os
 from pathlib import Path
 import re
+import shutil # Para apagar a pasta antiga
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from langchain_core.documents import Document
-from langchain_ollama import OllamaEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings # MUDANÇA AQUI
 from langchain_chroma import Chroma
 
+# Configurações
 RAW_TXT = Path("data/raw/biblia.txt")
 CHROMA_DIR = Path("data/processed/chroma_db_txt")
 COLLECTION_NAME = "biblia_almeida_rc_txt"
 
-EMBED_MODEL = "nomic-embed-text:latest"
-OLLAMA_BASE_URL = "http://localhost:11434"
+# Modelo de Embedding do Google
+EMBED_MODEL = "models/text-embedding-004" 
 
-BOOK_LINE_RE = re.compile(r"^[A-ZÁÉÍÓÚÂÊÔÃÕÇÜ][A-ZÁÉÍÓÚÂÊÔÃÕÇÜ\s\-]+$")          # GÊNESIS
-CHAPTER_LINE_RE = re.compile(r"^([A-ZÁÉÍÓÚÂÊÔÃÕÇÜ][A-ZÁÉÍÓÚÂÊÔÃÕÇÜ\s\-]+)\s+(\d+)$")  # GÊNESIS 1
-VERSE_LINE_RE = re.compile(r"^(\d{1,3})\s+(.+)$")                               # 1 No princípio...
+BOOK_LINE_RE = re.compile(r"^[A-ZÁÉÍÓÚÂÊÔÃÕÇÜ][A-ZÁÉÍÓÚÂÊÔÃÕÇÜ\s\-]+$")
+CHAPTER_LINE_RE = re.compile(r"^([A-ZÁÉÍÓÚÂÊÔÃÕÇÜ][A-ZÁÉÍÓÚÂÊÔÃÕÇÜ\s\-]+)\s+(\d+)$")
+VERSE_LINE_RE = re.compile(r"^(\d{1,3})\s+(.+)$")
 
 def parse_to_documents(path: Path) -> list[Document]:
-    testamento = None  # "AT" ou "NT"
+    testamento = None
     livro = None
     capitulo = None
 
@@ -29,8 +35,7 @@ def parse_to_documents(path: Path) -> list[Document]:
     with path.open("r", encoding="utf-8", errors="replace") as f:
         for raw in f:
             line = raw.strip()
-            if not line:
-                continue
+            if not line: continue
 
             upper = line.upper()
 
@@ -73,21 +78,34 @@ def parse_to_documents(path: Path) -> list[Document]:
                         },
                     )
                 )
-
     return docs
 
 def main():
     if not RAW_TXT.exists():
         raise FileNotFoundError(f"Não achei: {RAW_TXT.resolve()}")
 
+    # 1. Limpeza: Apagar o banco antigo para não misturar embeddings
+    if CHROMA_DIR.exists():
+        print(f"Removendo banco antigo em {CHROMA_DIR}...")
+        shutil.rmtree(CHROMA_DIR)
+
     docs = parse_to_documents(RAW_TXT)
     print(f"Versículos parseados: {len(docs)}")
 
-    # Embeddings
-    embeddings = OllamaEmbeddings(model=EMBED_MODEL, base_url=OLLAMA_BASE_URL)
-    embeddings.embed_query("ping")
+    # 2. Configurar Embeddings do Google (Pega a chave do ambiente)
+    if not os.getenv("GOOGLE_API_KEY"):
+        raise ValueError("A variável GOOGLE_API_KEY não está definida!")
+        
+    embeddings = GoogleGenerativeAIEmbeddings(model=EMBED_MODEL)
     
-     # Vector store
+    # Teste rápido de conexão
+    try:
+        embeddings.embed_query("teste")
+    except Exception as e:
+        print(f"Erro ao conectar na API do Google: {e}")
+        return
+
+    # 3. Criar Vector Store
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)
     vs = Chroma(
         persist_directory=str(CHROMA_DIR),
@@ -95,17 +113,16 @@ def main():
         embedding_function=embeddings,
     )
     
-    # Ingestão em lote simples (para não estourar memória)
-    batch_size = 128
+    # Ingestão em lote
+    batch_size = 100 # Reduzi um pouco por segurança da API
+    print("Iniciando ingestão no Google...")
     for i in range(0, len(docs), batch_size):
         batch = docs[i : i + batch_size]
         vs.add_documents(batch)
-        if i == 0 or (i // batch_size) % 50 == 0:
+        if i == 0 or (i // batch_size) % 10 == 0:
             print(f"Inseridos: {min(i + batch_size, len(docs))}/{len(docs)}")
 
     print("Ingestão concluída.")
-    print(f"Chroma em: {CHROMA_DIR}")
-    print(f"Collection: {COLLECTION_NAME}")
 
 if __name__ == "__main__":
     main()
