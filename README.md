@@ -1,5 +1,5 @@
 # Rag na Bíblia
-
+## A versão mais recente está na Develop
 Chat web (estilo ChatGPT) com RAG para responder perguntas bíblicas usando trechos recuperados da própria Bíblia como contexto.
 
 ## Fonte dos dados
