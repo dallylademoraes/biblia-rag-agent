@@ -1,13 +1,32 @@
-# Vectorstore / embeddings / indexes
+.venv/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Generated data / vector DB (heavy)
 data/processed/
 data/**/chroma_db*/
-**/chroma_db*/
+*.sqlite3
 *.sqlite
 *.db
 *.parquet
-
-# Python cache
-__pycache__/
-*.pyc
-.venv/
-.env
