@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Rag na Bíblia</title>
+    <title>Agente Bíblia RAG</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -11,23 +11,14 @@
       <aside class="sidebar" aria-label="Barra lateral">
         <div class="side-top">
           <div class="brand">
-            <div class="brand-mark" aria-hidden="true">R</div>
+            <div class="brand-mark" aria-hidden="true">A</div>
             <div>
-              <div class="brand-title">Rag na Bíblia</div>
-              <div class="brand-sub" id="statusLine">Conectando…</div>
+              <div class="brand-title">Agente Bíblia RAG</div>
+              <div class="brand-sub" id="statusLine">Inicializando…</div>
             </div>
           </div>
 
           <button id="newChatBtn" class="btn btn-primary" type="button">Nova conversa</button>
-        </div>
-
-        <div class="side-section">
-          <div class="side-title">Status</div>
-          <div class="status">
-            <span id="statusDot" class="dot dot-warn" aria-hidden="true"></span>
-            <span id="statusText">Verificando…</span>
-          </div>
-          <div class="side-help" id="statusHelp"></div>
         </div>
 
         <div class="side-section">
@@ -39,8 +30,27 @@
           </div>
         </div>
 
+        <div class="side-section" id="limitsBox" hidden>
+          <div class="side-title">Limites</div>
+          <div class="side-help" id="limitsText"></div>
+        </div>
+
+        <div class="side-section" id="accessBox" hidden>
+          <div class="side-title">Acesso</div>
+          <div class="side-help">Esta demo pode exigir uma chave para evitar consumo indevido.</div>
+          <div class="access-row">
+            <input id="demoToken" class="access-input" type="password" placeholder="Chave da demo" aria-label="Chave da demo" />
+            <button id="saveTokenBtn" class="btn btn-primary" type="button">Salvar</button>
+          </div>
+          <div class="side-help" id="accessMsg"></div>
+        </div>
+
         <div class="side-bottom">
           <button id="clearBtn" class="btn btn-ghost" type="button">Limpar</button>
+        </div>
+
+        <div class="side-credit">
+          Criado por <strong>Dallyla de Moraes</strong>
         </div>
       </aside>
 
@@ -48,7 +58,7 @@
         <header class="topbar">
           <div class="top-left">
             <button id="menuBtn" class="iconbtn" type="button" aria-label="Abrir menu">☰</button>
-            <div class="top-title">Rag na Bíblia</div>
+            <div class="top-title">Agente Bíblia RAG</div>
           </div>
           <div class="top-right">
             <div class="pill" id="pillReady">—</div>
